@@ -581,7 +581,7 @@ def readCommand( argv ):
         finally: f.close()
         recorded['display'] = args['display']
         replayGame(**recorded)
-        sys.exit(0)
+        pass
 
     return args
 

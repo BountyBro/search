@@ -69,7 +69,7 @@ class TestParser(object):
                 i += 1
                 continue
             print('error parsing test file: %s' % self.path)
-            sys.exit(1)
+            raise Exception('error parsing test file: %s' % self.path)
         return test
 
 

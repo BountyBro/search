@@ -451,7 +451,7 @@ def raiseNotDefined():
     method = inspect.stack()[1][3]
 
     print("*** Method not implemented: %s at line %s of %s" % (method, line, fileName))
-    sys.exit(1)
+    raise Exception("Method not implemented: %s at line %s of %s" % (method, line, fileName))
 
 def normalize(vectorOrCounter):
     """

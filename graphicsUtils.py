@@ -135,7 +135,7 @@ def draw_background():
     polygon(corners, _bg_color, fillColor=_bg_color, filled=True, smoothed=False)
 
 def _destroy_window(event=None):
-    sys.exit(0)
+    pass
 #    global _root_window
 #    _root_window.destroy()
 #    _root_window = None

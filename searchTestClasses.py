@@ -122,7 +122,7 @@ class GraphSearch(SearchProblem):
                     match = True
             if not match:
                 print('invalid action sequence')
-                sys.exit(1)
+                raise Exception('invalid action sequence')
         return total_cost
 
     # Return a list of all states on which 'getSuccessors' was called

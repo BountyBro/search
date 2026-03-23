@@ -25,7 +25,7 @@ class Question(object):
 
     def raiseNotDefined(self):
         print('Method not implemented: %s' % inspect.stack()[1][3])
-        sys.exit(1)
+        raise Exception("Method not implemented: %s" % inspect.stack()[1][3])
 
     def __init__(self, questionDict, display):
         self.maxPoints = int(questionDict['max_points'])
@@ -146,7 +146,7 @@ class TestCase(object):
 
     def raiseNotDefined(self):
         print('Method not implemented: %s' % inspect.stack()[1][3])
-        sys.exit(1)
+        raise Exception("Method not implemented: %s" % inspect.stack()[1][3])
 
     def getPath(self):
         return self.path
