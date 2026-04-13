@@ -87,7 +87,26 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from game import Directions
+    from util import manhattanDistance
+    n = Directions.NORTH
+    s = Directions.SOUTH
+    e = Directions.EAST
+    w = Directions.WEST
+    toReturn = []
+    while not problem.isGoalState():
+        actions = problem.getLegalActions()
+        weights = [0] * len(actions)
+        if len(actions) == 1:
+            toReturn.append(actions[0])
+        else:
+            for action in actions:
+                weights[actions.index(action)] = manhattanDistance(problem.getPacmanPosition(), problem.generatePacmanSuccessor(action).position)
+            toReturn.append(actions[weights.index(max(weights))])
+        problem = problem.getSuccessor(toReturn[-1])
+    return toReturn
+
+    # util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
