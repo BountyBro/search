@@ -95,16 +95,33 @@ def depthFirstSearch(problem):
     w = Directions.WEST
     fringe = Stack()
     vis = []
-    toReturn = []
-    curr = problem
-    while not fringe.isEmpty(): # Fix cond
-        vis.append(curr.getPacmanPosition())
-        for act in curr.getLegalActions():
-            if act not in vis:
-                fringe.append(act)
-        curr = curr.generateSuccessor(0, fringe.pop())
+    curr = {problem, []}
+    for act in curr.getLegalPacmanActions():
+        curr[1].append(act)
+        fringe.append({curr.generatePacManSuccessor(act), curr[1]})
+        curr[1].pop()
+    while not fringe.isEmpty():
         if curr.isGoalState(curr):
-            return toReturn
+            return curr[1]
+        vis.append(curr.getPacmanPosition())
+    
+        for act in curr.getLegalPacmanActions():
+            posCheck = curr.getPacmanPosition()
+            if act == Directions.NORTH:
+                posCheck[1] += 1
+            elif act == Directions.SOUTH:
+                posCheck[1] -= 1
+            elif act == Directions.EAST:
+                posCheck[0] += 1
+            else:
+                posCheck[0] -= 1
+
+            if posCheck not in vis:
+                curr[1].append(act)
+                fringe.append({curr.generatePacManSuccessor(act), curr[1]})
+                curr[1].pop()
+        
+        curr = fringe.pop()
     return []
 
 def breadthFirstSearch(problem):
