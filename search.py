@@ -178,11 +178,11 @@ def uniformCostSearch(problem):
     curr = {int, problem, []}
     for act in curr.getLegalPacmanActions():
         curr[2].append(act)
-        fringe.append({getCostOfActions(curr[1]), curr.generatePacManSuccessor(act), curr[1]})
+        fringe.append({SearchProblem.getCostOfActions(curr[2]), curr.generatePacManSuccessor(act), curr[2]})
         curr[2].pop()
     while not fringe.isEmpty():
         if curr.isGoalState(curr):
-            return curr[1]
+            return curr[2]
         vis.append(curr.getPacmanPosition())
     
         for act in curr.getLegalPacmanActions():
@@ -197,9 +197,9 @@ def uniformCostSearch(problem):
                 posCheck[0] -= 1
 
             if posCheck not in vis:
-                curr[1].append(act)
+                curr[2].append(act)
                 fringe.append({curr.generatePacManSuccessor(act), curr[1]})
-                curr[1].pop()
+                curr[2].pop()
         
         curr = fringe.pop()
     return []
