@@ -127,12 +127,82 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from game import Directions
+    from util import Queue
+    n = Directions.NORTH
+    s = Directions.SOUTH
+    e = Directions.EAST
+    w = Directions.WEST
+    fringe = Queue()
+    vis = []
+    curr = {problem, []}
+    for act in curr.getLegalPacmanActions():
+        curr[1].append(act)
+        fringe.append({curr.generatePacManSuccessor(act), curr[1]})
+        curr[1].pop()
+    while not fringe.isEmpty():
+        if curr.isGoalState(curr):
+            return curr[1]
+        vis.append(curr.getPacmanPosition())
+    
+        for act in curr.getLegalPacmanActions():
+            posCheck = curr.getPacmanPosition()
+            if act == Directions.NORTH:
+                posCheck[1] += 1
+            elif act == Directions.SOUTH:
+                posCheck[1] -= 1
+            elif act == Directions.EAST:
+                posCheck[0] += 1
+            else:
+                posCheck[0] -= 1
+
+            if posCheck not in vis:
+                curr[1].append(act)
+                fringe.append({curr.generatePacManSuccessor(act), curr[1]})
+                curr[1].pop()
+        
+        curr = fringe.pop()
+    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from game import Directions
+    from util import PriorityQueue
+    n = Directions.NORTH
+    s = Directions.SOUTH
+    e = Directions.EAST
+    w = Directions.WEST
+    fringe = PriorityQueue()
+    vis = []
+    curr = {int, problem, []}
+    for act in curr.getLegalPacmanActions():
+        curr[2].append(act)
+        fringe.append({getCostOfActions(curr[1]), curr.generatePacManSuccessor(act), curr[1]})
+        curr[2].pop()
+    while not fringe.isEmpty():
+        if curr.isGoalState(curr):
+            return curr[1]
+        vis.append(curr.getPacmanPosition())
+    
+        for act in curr.getLegalPacmanActions():
+            posCheck = curr.getPacmanPosition()
+            if act == Directions.NORTH:
+                posCheck[1] += 1
+            elif act == Directions.SOUTH:
+                posCheck[1] -= 1
+            elif act == Directions.EAST:
+                posCheck[0] += 1
+            else:
+                posCheck[0] -= 1
+
+            if posCheck not in vis:
+                curr[1].append(act)
+                fringe.append({curr.generatePacManSuccessor(act), curr[1]})
+                curr[1].pop()
+        
+        curr = fringe.pop()
+    return []
 
 def nullHeuristic(state, problem=None):
     """
