@@ -87,122 +87,61 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    from game import Directions
-    from util import Stack
-    n = Directions.NORTH
-    s = Directions.SOUTH
-    e = Directions.EAST
-    w = Directions.WEST
+    from util import Stack                      # For DFS fringe management as per the slides.
     fringe = Stack()
-    vis = []
-    curr = {problem, []}
-    for act in curr.getLegalPacmanActions():
-        curr[1].append(act)
-        fringe.append({curr.generatePacManSuccessor(act), curr[1]})
-        curr[1].pop()
+    fringe.push((problem.getStartState(), []))  # Adding start state to prep while loop.
+    visited = set()
     while not fringe.isEmpty():
-        if curr.isGoalState(curr):
-            return curr[1]
-        vis.append(curr.getPacmanPosition())
-    
-        for act in curr.getLegalPacmanActions():
-            posCheck = curr.getPacmanPosition()
-            if act == Directions.NORTH:
-                posCheck[1] += 1
-            elif act == Directions.SOUTH:
-                posCheck[1] -= 1
-            elif act == Directions.EAST:
-                posCheck[0] += 1
-            else:
-                posCheck[0] -= 1
-
-            if posCheck not in vis:
-                curr[1].append(act)
-                fringe.append({curr.generatePacManSuccessor(act), curr[1]})
-                curr[1].pop()
-        
-        curr = fringe.pop()
-    return []
+        state, actions = fringe.pop()           # Python unpacking makes things so much easier.
+        if problem.isGoalState(state):
+            return actions
+        if state not in visited:
+            visited.add(state)
+            for successor, action, stepCost in problem.getSuccessors(state):
+                if successor not in visited:
+                    newActions = actions + [action]
+                    fringe.push((successor, newActions))
+    return ['X']                                # Failure Condition: Should not occur.
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    from game import Directions
-    from util import Queue
-    n = Directions.NORTH
-    s = Directions.SOUTH
-    e = Directions.EAST
-    w = Directions.WEST
+    from util import Queue                      # For BFS fringe management as per the slides.
     fringe = Queue()
-    vis = []
-    curr = {problem, []}
-    for act in curr.getLegalPacmanActions():
-        curr[1].append(act)
-        fringe.append({curr.generatePacManSuccessor(act), curr[1]})
-        curr[1].pop()
+    fringe.push((problem.getStartState(), []))  # Adding start state to prep while loop.
+    visited = set()
     while not fringe.isEmpty():
-        if curr.isGoalState(curr):
-            return curr[1]
-        vis.append(curr.getPacmanPosition())
-    
-        for act in curr.getLegalPacmanActions():
-            posCheck = curr.getPacmanPosition()
-            if act == Directions.NORTH:
-                posCheck[1] += 1
-            elif act == Directions.SOUTH:
-                posCheck[1] -= 1
-            elif act == Directions.EAST:
-                posCheck[0] += 1
-            else:
-                posCheck[0] -= 1
-
-            if posCheck not in vis:
-                curr[1].append(act)
-                fringe.append({curr.generatePacManSuccessor(act), curr[1]})
-                curr[1].pop()
-        
-        curr = fringe.pop()
-    return []
+        state, actions = fringe.pop()
+        if problem.isGoalState(state):
+            return actions
+        if state not in visited:
+            visited.add(state)
+            for successor, action, stepCost in problem.getSuccessors(state):
+                if successor not in visited:
+                    newActions = actions + [action]
+                    fringe.push((successor, newActions))
+    return ['X']                                # Failure Condition: Should not occur.
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    from game import Directions
-    from util import PriorityQueue
-    n = Directions.NORTH
-    s = Directions.SOUTH
-    e = Directions.EAST
-    w = Directions.WEST
+    from util import PriorityQueue                      # For UCS fringe management as per the slides.
     fringe = PriorityQueue()
-    vis = []
-    curr = {int, problem, []}
-    for act in curr.getLegalPacmanActions():
-        curr[2].append(act)
-        fringe.append({SearchProblem.getCostOfActions(curr[2]), curr.generatePacManSuccessor(act), curr[2]})
-        curr[2].pop()
+    fringe.push((problem.getStartState(), [], 0), 0)    # (state, actions, cost), priority.
+    bestCosts = { problem.getStartState(): 0 }
     while not fringe.isEmpty():
-        if curr.isGoalState(curr):
-            return curr[2]
-        vis.append(curr.getPacmanPosition())
-    
-        for act in curr.getLegalPacmanActions():
-            posCheck = curr.getPacmanPosition()
-            if act == Directions.NORTH:
-                posCheck[1] += 1
-            elif act == Directions.SOUTH:
-                posCheck[1] -= 1
-            elif act == Directions.EAST:
-                posCheck[0] += 1
-            else:
-                posCheck[0] -= 1
-
-            if posCheck not in vis:
-                curr[2].append(act)
-                fringe.append({curr.generatePacManSuccessor(act), curr[1]})
-                curr[2].pop()
-        
-        curr = fringe.pop()
-    return []
+        state, actions, cost = fringe.pop()
+        if problem.isGoalState(state):
+            return actions
+        if cost > bestCosts.get(state, 999):            # 999 is an arbitrary over-maximum.
+            continue
+        for successor, action, stepCost in problem.getSuccessors(state):
+            newCost = cost + stepCost
+            if successor not in bestCosts or newCost < bestCosts[successor]:
+                bestCosts[successor] = newCost
+                newActions = actions + [action]
+                fringe.push((successor, newActions, newCost), newCost)
+    return ['X']                                        # Failure Condition: Should not occur.
 
 def nullHeuristic(state, problem=None):
     """
@@ -214,8 +153,25 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    from util import PriorityQueue
+    fringe = PriorityQueue()                            # For astar fringe management as per the slides. 
+    startHeuristic = heuristic(problem.getStartState(), problem)
+    fringe.push((problem.getStartState(), [], 0), startHeuristic)
+    bestCosts = { problem.getStartState(): 0 }
+    while not fringe.isEmpty():
+        state, actions, cost = fringe.pop()
+        if problem.isGoalState(state):
+            return actions
+        if cost > bestCosts.get(state, 999):            # 999 is an arbitrary over-maximum.
+            continue
+        for successor, action, stepCost in problem.getSuccessors(state):
+            newCost = cost + stepCost
+            if successor not in bestCosts or newCost < bestCosts[successor]:
+                bestCosts[successor] = newCost
+                newActions = actions + [action]
+                priority = newCost + heuristic(successor, problem)
+                fringe.push((successor, newActions, newCost), priority)
+    return ['X']                                        # Failure Condition: Should not occur.
 
 # Abbreviations
 bfs = breadthFirstSearch
