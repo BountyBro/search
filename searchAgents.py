@@ -376,10 +376,27 @@ def cornersHeuristic(state, problem):
 
     "*** YOUR CODE HERE ***"
     from util import manhattanDistance
-    if corners.isEmpty():
+    position, visited = state
+    remaining = [corner for corner, flag in zip(problem.corners, visited) if not flag]
+    if not remaining:
         return 0
-    distances = [manhattanDistance(state[0], corner) for corner in corners]
-    return max(distances)
+    nearestDistance = min(manhattanDistance(position, c) for c in remaining)
+    if 1 < len(remaining):
+        visited = [remaining[0]]
+        unvisited = remaining[1:]
+        while unvisited:
+            sml = 999
+            crn = None
+            dist = 0
+            for u in unvisited:
+                dist = min(manhattanDistance(u, v) for v in visited)
+                if dist < sml:
+                    sml = dist
+                    crn = u
+            nearestDistance += sml
+            unvisited.remove(crn)
+            visited.append(crn)
+    return nearestDistance
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -475,7 +492,7 @@ def foodHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     from util import manhattanDistance
     foodList = foodGrid.asList()
-    if foodList.isEmpty():
+    if not foodList:
         return 0
     return max([manhattanDistance(position, food) for food in foodList])
 
